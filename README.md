@@ -13,13 +13,6 @@ A simple yet powerful tool built in **C++** with a user-friendly web interface t
 
 ---
 
-## 🚀 Demo
-
-**[Live Demo Link](https://file:///C:/Users/HP/Desktop/Major/tool.html.com)**  
-
-
----
-
 ## 🛠 Tech Stack
 
 - 💻 C++ (Recursive Algorithm)
