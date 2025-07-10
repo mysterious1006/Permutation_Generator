@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+// Function to generate permutations recursively
+void generatePermutations(vector<string>& items, int start) {
+    if (start == items.size() - 1) {
+        for (const auto& item : items) {
+            cout << item << " ";
+        }
+        cout << endl;
+        return;
+    }
+
+    for (int i = start; i < items.size(); ++i) {
+        swap(items[start], items[i]);
+        generatePermutations(items, start + 1);
+        swap(items[start], items[i]); // backtrack
+    }
+}
+
+int main() {
+    cout << "Enter 's' for string or 'l' for list: ";
+    char type;
+    cin >> type;
+    cin.ignore();
+
+    vector<string> items;
+
+    if (type == 's') {
+        string input;
+        cout << "Enter the string: ";
+        getline(cin, input);
+        for (char c : input) {
+            items.push_back(string(1, c));
+        }
+    } else if (type == 'l') {
+        string input;
+        cout << "Enter list elements separated by space: ";
+        getline(cin, input);
+        string temp;
+        for (char c : input) {
+            if (c == ' ') {
+                if (!temp.empty()) {
+                    items.push_back(temp);
+                    temp.clear();
+                }
+            } else {
+                temp += c;
+            }
+        }
+        if (!temp.empty()) items.push_back(temp);
+    } else {
+        cout << "Invalid input type.\n";
+        return 1;
+    }
+
+    cout << "\nAll permutations:\n";
+    generatePermutations(items, 0);
+
+    return 0;
+}
