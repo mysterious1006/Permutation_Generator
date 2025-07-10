@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permutation Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-image: url('bg.jpg');
+            background-size: 300px 300px; 
+            color: #ffffff; 
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #16213e; 
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s; 
+        }
+        .container:hover {
+            transform: scale(1.02); 
+        }
+        h1 {
+            text-align: center;
+            color: #00d2ff; 
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #ffcc00; 
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ffcc00;
+            border-radius: 4px;
+            background-color: #002244; 
+            color: #ffffff; 
+            transition: background-color 0.3s; 
+        }
+        input:focus, textarea:focus, select:focus {
+            background-color: #004080; 
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(to right, #11998e, #38ef7d); 
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s; 
+        }
+        button:hover {
+            background: linear-gradient(to right, #38ef7d, #11998e); 
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #1a1a2e; 
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            opacity: 0; 
+            transition: opacity 0.5s; 
+        }
+        .result.show {
+            opacity: 1; 
+        }
+        .count {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #ffcc00; 
+        }
+        .about {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #1a1a2e;
+            border-radius: 8px;
+            border: 2px solid #00d2ff;
+            box-shadow: 0 4px 8px rgba(0, 210, 255, 0.2);
+        }
+        .about h3 {
+            color: #ffcc00; 
+        }
+        .card {
+            background-color: #2c3e50; 
+            color: #ecf0f1; 
+            border-radius: 4px;
+            padding: 10px;
+            margin: 5px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            button {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Permutation Generator</h1>
+        <label for="type">Select Input Type:</label>
+        <select id="type">
+            <option value="s">String</option>
+            <option value="l">List</option>
+        </select>
+
+        <label for="input">Enter your input:</label>
+        <textarea id="input" rows="4" placeholder="Enter a string"></textarea>
+
+        <button id="generate">Generate Permutations</button>
+
+        <div class="result" id="result">
+            <strong>Results:</strong><br>
+            <div id="permutation-list"></div>
+            <div class="count" id="permutation-count"></div>
+        </div>
+
+        <div class="about">
+            <h3 style="margin-bottom: 10px;">About Permutations</h3>
+            <p style="margin-bottom: 0;">This tool generates all possible permutations of your input using a recursive algorithm. For a string or list of n unique elements, there are n! (n factorial) possible permutations.</p>
+        </div>
+    </div>
+
+    <script>
+        function generatePermutations(items, start) {
+            if (start === items.length - 1) {
+                return [items.join(' ')];
+            }
+
+            let results = [];
+            for (let i = start; i < items.length; i++) {
+                [items[start], items[i]] = [items[i], items[start]]; // Swap
+                results = results.concat(generatePermutations(items, start + 1));
+                [items[start], items[i]] = [items[i], items[start]]; // Backtrack
+            }
+            return results;
+        }
+
+        document.getElementById('generate').addEventListener('click', () => {
+            const type = document.getElementById('type').value;
+            const input = document.getElementById('input').value.trim();
+            const permutationListDiv = document.getElementById('permutation-list');
+            const permutationCountDiv = document.getElementById('permutation-count');
+            const resultDiv = document.getElementById('result');
+            permutationListDiv.innerHTML = ''; // Clear previous results
+            permutationCountDiv.innerHTML = ''; // Clear previous count
+
+            let items = [];
+            if (type === 's') {
+                for (let c of input) {
+                    items.push(c);
+                }
+            } else if (type === 'l') {
+                items = input.split(/\s+/).filter(item => item); // Split by spaces
+            } else {
+                permutationListDiv.innerHTML = 'Invalid input type.';
+                return;
+            }
+
+            const permutations = generatePermutations(items, 0);
+            permutations.forEach(permutation => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.textContent = permutation;
+                permutationListDiv.appendChild(card);
+            });
+            permutationCountDiv.innerHTML = `Number of permutations found: ${permutations.length}`;
+            resultDiv.classList.add('show'); // Show results with fade-in effect
+        });
+
+        // Update placeholder based on selected input type
+        document.getElementById('type').addEventListener('change', function() {
+            const inputField = document.getElementById('input');
+            if (this.value === 's') {
+                inputField.placeholder = 'Enter a string';
+            } else {
+                inputField.placeholder = 'Enter list elements separated by space';
+            }
+        });
+    </script>
+</body>
+</html>
